@@ -29,6 +29,14 @@ From the app Settings tab you can:
 - Export a `.renoff.json` backup (items + reminders)
 - Import a backup (replace all or merge)
 
+## First run
+
+On first launch, when the local database is empty, RenOff creates two sample items:
+- `Prova: aggiungi un to-do`
+- `Prova: nota rapida`
+
+They are only starter examples to show how the app works, and can be edited or deleted at any time.
+
 ## Download
 
 Releases are distributed as a `.zip` file containing the published build.
