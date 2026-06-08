@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RenOff.App/RenOff.App.csproj" />
+    <Project Path="src/RenOff.Core/RenOff.Core.csproj" />
+    <Project Path="src/RenOff.Data/RenOff.Data.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RenOff.Tests/RenOff.Tests.csproj" />
+  </Folder>
+</Solution>

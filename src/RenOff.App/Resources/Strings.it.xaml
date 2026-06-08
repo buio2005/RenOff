@@ -1,0 +1,55 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <sys:String x:Key="AppTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">RenOff</sys:String>
+    <sys:String x:Key="Add" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Aggiungi</sys:String>
+    <sys:String x:Key="Delete" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Elimina</sys:String>
+    <sys:String x:Key="QuickAddPlaceholder" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Titolo nota o memo</sys:String>
+    <sys:String x:Key="QuickAddTooltip" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Scrivi e premi Invio per aggiungere un to-do</sys:String>
+    <sys:String x:Key="SelectItemHint" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Seleziona un elemento a sinistra (o aggiungine uno sopra).</sys:String>
+    <sys:String x:Key="IsTodo" xmlns:sys="clr-namespace:System;assembly=System.Runtime">È un To-Do</sys:String>
+    <sys:String x:Key="Completed" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Completato</sys:String>
+    <sys:String x:Key="Reminder" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Reminder</sys:String>
+    <sys:String x:Key="Save" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Salva</sys:String>
+    <sys:String x:Key="Snooze10m" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Snooze 10m</sys:String>
+    <sys:String x:Key="Disable" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Disattiva</sys:String>
+    <sys:String x:Key="Settings" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Impostazioni</sys:String>
+    <sys:String x:Key="Details" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Dettaglio</sys:String>
+    <sys:String x:Key="Language" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Lingua</sys:String>
+    <sys:String x:Key="Theme" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Tema</sys:String>
+    <sys:String x:Key="UiStyle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Stile UI</sys:String>
+    <sys:String x:Key="Classic" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Classico</sys:String>
+    <sys:String x:Key="Modern" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Moderno</sys:String>
+    <sys:String x:Key="CloseToTray" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Chiudi in tray (consigliato)</sys:String>
+    <sys:String x:Key="AddedItem" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Aggiunto</sys:String>
+    <sys:String x:Key="NothingToAdd" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Scrivi un titolo per aggiungere</sys:String>
+    <sys:String x:Key="SelectAll" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Seleziona tutte</sys:String>
+    <sys:String x:Key="CompleteSelected" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Completa</sys:String>
+    <sys:String x:Key="DeleteSelected" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Elimina selezionate</sys:String>
+    <sys:String x:Key="DeleteAll" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Elimina tutto</sys:String>
+    <sys:String x:Key="CompletedSelected" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Completate</sys:String>
+    <sys:String x:Key="DeletedSelected" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Eliminate</sys:String>
+    <sys:String x:Key="DeletedAll" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Tutto eliminato</sys:String>
+    <sys:String x:Key="ReminderSaved" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Salvato</sys:String>
+    <sys:String x:Key="ReminderSavedTemplate" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Salvato: {0:dd/MM HH:mm}</sys:String>
+    <sys:String x:Key="Nudge" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Promemoria lettura</sys:String>
+    <sys:String x:Key="NudgeEvery" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Ricorda ogni</sys:String>
+    <sys:String x:Key="Hours" xmlns:sys="clr-namespace:System;assembly=System.Runtime">ore</sys:String>
+    <sys:String x:Key="NudgePopupTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Non ti dimenticare di leggere le note</sys:String>
+    <sys:String x:Key="NudgeTodoTemplate" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Hai {0} to-do in sospeso. Apri RenOff per rivederli.</sys:String>
+    <sys:String x:Key="ReminderPrefix" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Reminder:</sys:String>
+    <sys:String x:Key="ReminderPopupTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Non ti dimenticare di leggere le note</sys:String>
+    <sys:String x:Key="Ok" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Ok</sys:String>
+    <sys:String x:Key="TrayOpen" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Apri RenOff</sys:String>
+    <sys:String x:Key="TrayExit" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Esci</sys:String>
+    <sys:String x:Key="Export" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Esporta</sys:String>
+    <sys:String x:Key="Import" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Importa</sys:String>
+    <sys:String x:Key="ExportTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Esporta backup</sys:String>
+    <sys:String x:Key="ImportTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Importa backup</sys:String>
+    <sys:String x:Key="BackupExported" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Backup esportato</sys:String>
+    <sys:String x:Key="BackupImported" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Backup importato</sys:String>
+    <sys:String x:Key="ImportInvalid" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Backup non valido.</sys:String>
+    <sys:String x:Key="ImportModeTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Importazione</sys:String>
+    <sys:String x:Key="ImportModeText" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Vuoi sostituire tutto (Sì) o unire ai dati esistenti (No)?</sys:String>
+    <sys:String x:Key="ConfirmDeleteAllTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Conferma</sys:String>
+    <sys:String x:Key="ConfirmDeleteAllText" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Vuoi eliminare tutte le note e i to-do? Questa operazione non può essere annullata.</sys:String>
+</ResourceDictionary>

@@ -1,0 +1,23 @@
+## Build outputs
+**/bin/
+**/obj/
+
+## Visual Studio / VS Code / Rider
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Logs
+*.log
+
+## Local databases / data files (precaution)
+*.db
+*.sqlite
+*.sqlite3
+
+## OS
+Thumbs.db
+Desktop.ini
