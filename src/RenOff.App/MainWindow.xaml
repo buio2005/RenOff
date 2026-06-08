@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RenOff.App"
         mc:Ignorable="d"
-        Title="{DynamicResource AppTitle}" Height="650" Width="980" MinHeight="520" MinWidth="820"
+        Title="{DynamicResource AppTitle}" Height="650" Width="998" MinHeight="520" MinWidth="820"
         Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource WindowForegroundBrush}">
     <Grid>
