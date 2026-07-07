@@ -30,6 +30,7 @@ public partial class App : System.Windows.Application
         ApplyStartupSettings();
         MainWindow = new MainWindow();
         MainWindow.Show();
+        AppLockService.Start(MainWindow);
         _tray = new TrayService();
     }
 
@@ -151,6 +152,7 @@ public partial class App : System.Windows.Application
             WindowState = oldState,
         };
         app.MainWindow = next;
+        AppLockService.RegisterActivitySource(next);
         if (wasVisible)
         {
             next.Show();

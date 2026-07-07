@@ -24,3 +24,8 @@ Desktop.ini
 
 ## Release packages
 RenOff-v*.zip
+installer-output/
+artifacts/
+
+## Local comparison / backup folders
+nuova_versione/

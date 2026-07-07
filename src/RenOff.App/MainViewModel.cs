@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -33,6 +34,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private string _uiLanguage = "it";
     private string _uiTheme = "light";
     private string _uiStyle = "modern";
+    private string _appLockTimeout = "never";
     private bool _closeToTrayEnabled = true;
     private bool _nudgeEnabled = true;
     private int _nudgeIntervalHours = 4;
@@ -58,6 +60,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         {
             NudgeIntervalHours = hours;
         }
+        AppLockTimeout = NormalizeAppLockTimeout(_store.GetSetting("applock.timeout") ?? AppLockService.GetTimeoutSetting());
         _isInitializingSettings = false;
 
         _clockTimer = new DispatcherTimer(DispatcherPriority.Background)
@@ -79,6 +82,13 @@ public sealed class MainViewModel : INotifyPropertyChanged
         DeleteSelectedCommand = new RelayCommand(DeleteSelectedBulk, CanDeleteSelected);
         ExportCommand = new RelayCommand(ExportBackup, () => Items.Count > 0);
         ImportCommand = new RelayCommand(ImportBackup);
+        ChangeLockPasswordCommand = new RelayCommand(() =>
+        {
+            if (PromptSetLockPassword())
+            {
+                ShowHeaderStatus("AppLockPasswordSet");
+            }
+        });
 
         Items.CollectionChanged += (_, _) =>
         {
@@ -184,6 +194,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public ICommand DeleteSelectedCommand { get; }
     public ICommand ExportCommand { get; }
     public ICommand ImportCommand { get; }
+    public ICommand ChangeLockPasswordCommand { get; }
 
     public string UiLanguage
     {
@@ -237,6 +248,81 @@ public sealed class MainViewModel : INotifyPropertyChanged
     }
 
     public bool IsThemeSelectionEnabled => _uiStyle.Equals("modern", StringComparison.OrdinalIgnoreCase);
+
+    public string AppLockTimeout
+    {
+        get => _appLockTimeout;
+        set
+        {
+            value = NormalizeAppLockTimeout(value);
+            if (value == _appLockTimeout) return;
+            var previousValue = _appLockTimeout;
+
+            if (!_isInitializingSettings && value != "never" && !AppLockService.HasPasswordConfigured())
+            {
+                if (!PromptSetLockPassword())
+                {
+                    _appLockTimeout = previousValue;
+                    OnPropertyChanged();
+                    return;
+                }
+            }
+
+            _appLockTimeout = value;
+            if (_isInitializingSettings)
+            {
+                OnPropertyChanged();
+                return;
+            }
+
+            AppLockService.SetTimeoutSetting(value);
+            _store.SetSetting("applock.timeout", value);
+            _appLockTimeout = NormalizeAppLockTimeout(_store.GetSetting("applock.timeout") ?? value);
+            OnPropertyChanged();
+        }
+    }
+
+    public void RefreshAppLockSettings()
+    {
+        _isInitializingSettings = true;
+        AppLockTimeout = NormalizeAppLockTimeout(_store.GetSetting("applock.timeout") ?? AppLockService.GetTimeoutSetting());
+        _isInitializingSettings = false;
+    }
+
+    private bool PromptSetLockPassword()
+    {
+        var dialog = new PassphraseDialog(
+            GetResourceString("AppLockSetPasswordPrompt", "Imposta una password per il blocco app."),
+            requireConfirmation: true,
+            showPlainOption: false,
+            confirmButtonText: GetResourceString("AppLockSetPasswordButton", "Imposta"),
+            titleText: GetResourceString("ChangeLockPassword", "Imposta/cambia password blocco"))
+        {
+            Owner = System.Windows.Application.Current?.MainWindow,
+        };
+
+        if (dialog.ShowDialog() != true || dialog.Outcome != PassphraseDialogResult.Encrypted) return false;
+
+        var recoveryCode = AppLockService.SetPasswordAndGenerateRecoveryCode(dialog.Passphrase);
+
+        var recoveryDialog = new RecoveryCodeDialog(recoveryCode)
+        {
+            Owner = System.Windows.Application.Current?.MainWindow,
+        };
+        recoveryDialog.ShowDialog();
+
+        return true;
+    }
+
+    private static string NormalizeAppLockTimeout(string? value)
+    {
+        return (value ?? "never").Trim().ToLowerInvariant() switch
+        {
+            "30m" => "30m",
+            "1h" => "1h",
+            _ => "never",
+        };
+    }
 
     public bool CloseToTrayEnabled
     {
@@ -544,12 +630,28 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
     private void ExportBackup()
     {
+        var passphraseDialog = new PassphraseDialog(
+            GetResourceString("ExportEncryptPrompt", "Proteggi il backup con una password (opzionale)."),
+            requireConfirmation: true,
+            showPlainOption: true,
+            confirmButtonText: GetResourceString("ExportEncryptedButton", "Esporta cifrato"),
+            titleText: GetResourceString("ExportTitle", "Esporta backup"))
+        {
+            Owner = System.Windows.Application.Current?.MainWindow,
+        };
+
+        if (passphraseDialog.ShowDialog() != true) return;
+        if (passphraseDialog.Outcome == PassphraseDialogResult.Cancelled) return;
+
+        var encrypt = passphraseDialog.Outcome == PassphraseDialogResult.Encrypted;
         var dialog = new Microsoft.Win32.SaveFileDialog
         {
-            Title = System.Windows.Application.Current?.TryFindResource("ExportTitle") as string ?? "Esporta",
-            Filter = "RenOff backup (*.renoff.json)|*.renoff.json|JSON (*.json)|*.json",
-            DefaultExt = ".renoff.json",
-            FileName = $"renoff-backup-{DateTime.Now:yyyyMMdd}.renoff.json",
+            Title = GetResourceString("ExportTitle", "Esporta"),
+            Filter = encrypt
+                ? "RenOff backup cifrato (*.renoff.enc)|*.renoff.enc"
+                : "RenOff backup (*.renoff.json)|*.renoff.json|JSON (*.json)|*.json",
+            DefaultExt = encrypt ? ".renoff.enc" : ".renoff.json",
+            FileName = $"renoff-backup-{DateTime.Now:yyyyMMdd}.{(encrypt ? "renoff.enc" : "renoff.json")}",
         };
 
         if (dialog.ShowDialog() != true) return;
@@ -571,23 +673,44 @@ public sealed class MainViewModel : INotifyPropertyChanged
         };
 
         var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(dialog.FileName, json);
+
+        if (encrypt)
+        {
+            var encrypted = BackupEncryption.Encrypt(json, passphraseDialog.Passphrase);
+            File.WriteAllBytes(dialog.FileName, encrypted);
+        }
+        else
+        {
+            File.WriteAllText(dialog.FileName, json);
+        }
 
         ShowHeaderStatus("BackupExported");
-        App.ShowTrayBalloon("RenOff", System.Windows.Application.Current?.TryFindResource("BackupExported") as string ?? "Esportato");
+        App.ShowTrayBalloon("RenOff", GetResourceString("BackupExported", "Esportato"));
     }
 
     private void ImportBackup()
     {
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
-            Title = System.Windows.Application.Current?.TryFindResource("ImportTitle") as string ?? "Importa",
-            Filter = "RenOff backup (*.renoff.json;*.json)|*.renoff.json;*.json|All files (*.*)|*.*",
+            Title = GetResourceString("ImportTitle", "Importa"),
+            Filter = "RenOff backup (*.renoff.json;*.renoff.enc;*.json)|*.renoff.json;*.renoff.enc;*.json|All files (*.*)|*.*",
         };
 
         if (dialog.ShowDialog() != true) return;
 
-        var json = File.ReadAllText(dialog.FileName);
+        var fileBytes = File.ReadAllBytes(dialog.FileName);
+        string? json;
+
+        if (BackupEncryption.IsEncrypted(fileBytes))
+        {
+            json = DecryptBackupWithPrompt(fileBytes);
+            if (json is null) return;
+        }
+        else
+        {
+            json = Encoding.UTF8.GetString(fileBytes);
+        }
+
         var payload = JsonSerializer.Deserialize<BackupPayload>(
             json,
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
@@ -595,16 +718,15 @@ public sealed class MainViewModel : INotifyPropertyChanged
         if (payload is null || payload.Items.Count == 0)
         {
             System.Windows.MessageBox.Show(
-                System.Windows.Application.Current?.TryFindResource("ImportInvalid") as string ?? "Backup non valido.",
+                GetResourceString("ImportInvalid", "Backup non valido."),
                 "RenOff",
                 System.Windows.MessageBoxButton.OK,
                 System.Windows.MessageBoxImage.Warning);
             return;
         }
 
-        var promptTitle = System.Windows.Application.Current?.TryFindResource("ImportModeTitle") as string ?? "Importazione";
-        var promptText = System.Windows.Application.Current?.TryFindResource("ImportModeText") as string
-                         ?? "Vuoi sostituire tutto (Sì) o unire ai dati esistenti (No)?";
+        var promptTitle = GetResourceString("ImportModeTitle", "Importazione");
+        var promptText = GetResourceString("ImportModeText", "Vuoi sostituire tutto (Sì) o unire ai dati esistenti (No)?");
         var mode = System.Windows.MessageBox.Show(promptText, promptTitle, System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Question);
         if (mode == System.Windows.MessageBoxResult.Cancel) return;
 
@@ -637,8 +759,42 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
         ReloadFromStore();
         ShowHeaderStatus("BackupImported");
-        App.ShowTrayBalloon("RenOff", System.Windows.Application.Current?.TryFindResource("BackupImported") as string ?? "Importato");
+        App.ShowTrayBalloon("RenOff", GetResourceString("BackupImported", "Importato"));
     }
+
+    private string? DecryptBackupWithPrompt(byte[] fileBytes)
+    {
+        while (true)
+        {
+            var dialog = new PassphraseDialog(
+                GetResourceString("ImportDecryptPrompt", "Questo backup è protetto da password. Inseriscila per continuare."),
+                requireConfirmation: false,
+                showPlainOption: false,
+                confirmButtonText: GetResourceString("UnlockButton", "Sblocca"),
+                titleText: GetResourceString("ImportTitle", "Importa backup"))
+            {
+                Owner = System.Windows.Application.Current?.MainWindow,
+            };
+
+            if (dialog.ShowDialog() != true || dialog.Outcome == PassphraseDialogResult.Cancelled) return null;
+
+            try
+            {
+                return BackupEncryption.Decrypt(fileBytes, dialog.Passphrase);
+            }
+            catch (InvalidDataException)
+            {
+                System.Windows.MessageBox.Show(
+                    GetResourceString("WrongPassphrase", "Password errata o file corrotto."),
+                    "RenOff",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Warning);
+            }
+        }
+    }
+
+    private static string GetResourceString(string key, string fallback)
+        => System.Windows.Application.Current?.TryFindResource(key) as string ?? fallback;
 
     private void ReloadFromStore()
     {

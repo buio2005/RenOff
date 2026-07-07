@@ -11,12 +11,22 @@
     <sys:String x:Key="Reminder" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Reminder</sys:String>
     <sys:String x:Key="Save" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Salva</sys:String>
     <sys:String x:Key="Snooze10m" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Snooze 10m</sys:String>
+    <sys:String x:Key="Snooze1h" xmlns:sys="clr-namespace:System;assembly=System.Runtime">1 ora</sys:String>
+    <sys:String x:Key="SnoozeTomorrow" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Domani</sys:String>
     <sys:String x:Key="Disable" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Disattiva</sys:String>
     <sys:String x:Key="Settings" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Impostazioni</sys:String>
     <sys:String x:Key="Details" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Dettaglio</sys:String>
     <sys:String x:Key="Language" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Lingua</sys:String>
     <sys:String x:Key="Theme" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Tema</sys:String>
     <sys:String x:Key="UiStyle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Stile UI</sys:String>
+    <sys:String x:Key="SettingsAppearanceSection" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Aspetto e comportamento</sys:String>
+    <sys:String x:Key="SettingsAppearanceHint" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Personalizza lingua, tema, stile e chiusura in tray.</sys:String>
+    <sys:String x:Key="SettingsReminderSection" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Promemoria</sys:String>
+    <sys:String x:Key="SettingsReminderHint" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Gestisci il promemoria lettura automatico per non perdere di vista le note importanti.</sys:String>
+    <sys:String x:Key="SettingsBackupSection" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Backup e trasferimento</sys:String>
+    <sys:String x:Key="SettingsBackupHint" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Esporta o importa le note in formato standard o cifrato per spostarle su un altro dispositivo.</sys:String>
+    <sys:String x:Key="SettingsPrivacySection" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Privacy e blocco</sys:String>
+    <sys:String x:Key="SettingsPrivacyHint" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Proteggi RenOff con una password locale e scegli dopo quanto tempo bloccare l'app.</sys:String>
     <sys:String x:Key="Classic" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Classico</sys:String>
     <sys:String x:Key="Modern" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Moderno</sys:String>
     <sys:String x:Key="CloseToTray" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Chiudi in tray (consigliato)</sys:String>
@@ -40,6 +50,7 @@
     <sys:String x:Key="ReminderPopupTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Non ti dimenticare di leggere le note</sys:String>
     <sys:String x:Key="Ok" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Ok</sys:String>
     <sys:String x:Key="TrayOpen" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Apri RenOff</sys:String>
+    <sys:String x:Key="TrayLockNow" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Blocca RenOff</sys:String>
     <sys:String x:Key="TrayExit" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Esci</sys:String>
     <sys:String x:Key="Export" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Esporta</sys:String>
     <sys:String x:Key="Import" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Importa</sys:String>
@@ -52,4 +63,38 @@
     <sys:String x:Key="ImportModeText" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Vuoi sostituire tutto (Sì) o unire ai dati esistenti (No)?</sys:String>
     <sys:String x:Key="ConfirmDeleteAllTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Conferma</sys:String>
     <sys:String x:Key="ConfirmDeleteAllText" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Vuoi eliminare tutte le note e i to-do? Questa operazione non può essere annullata.</sys:String>
+    <sys:String x:Key="Cancel" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Annulla</sys:String>
+    <sys:String x:Key="PasswordLabel" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Password</sys:String>
+    <sys:String x:Key="ConfirmPasswordLabel" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Conferma password</sys:String>
+    <sys:String x:Key="ExportEncryptPrompt" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Proteggi il backup con una password (opzionale).</sys:String>
+    <sys:String x:Key="ExportPlainButton" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Esporta in chiaro</sys:String>
+    <sys:String x:Key="ExportEncryptedButton" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Esporta cifrato</sys:String>
+    <sys:String x:Key="ImportDecryptPrompt" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Questo backup è protetto da password. Inseriscila per continuare.</sys:String>
+    <sys:String x:Key="UnlockButton" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Sblocca</sys:String>
+    <sys:String x:Key="PassphraseEmpty" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Inserisci una password.</sys:String>
+    <sys:String x:Key="PassphraseMismatch" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Le due password non coincidono.</sys:String>
+    <sys:String x:Key="WrongPassphrase" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Password errata o file corrotto.</sys:String>
+    <sys:String x:Key="AppLockLabel" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Blocco app</sys:String>
+    <sys:String x:Key="AppLockNever" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Mai</sys:String>
+    <sys:String x:Key="AppLock30m" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Dopo 30 minuti</sys:String>
+    <sys:String x:Key="AppLock1h" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Dopo 1 ora</sys:String>
+    <sys:String x:Key="ChangeLockPassword" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Imposta/cambia password blocco</sys:String>
+    <sys:String x:Key="AppLockTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">RenOff è bloccato</sys:String>
+    <sys:String x:Key="AppLockPrompt" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Inserisci la password per continuare.</sys:String>
+    <sys:String x:Key="AppLockForgot" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Password dimenticata? Disattiva blocco</sys:String>
+    <sys:String x:Key="AppLockForgotTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Recupero password</sys:String>
+    <sys:String x:Key="AppLockSetPasswordPrompt" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Imposta una password per il blocco app.</sys:String>
+    <sys:String x:Key="AppLockSetPasswordButton" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Imposta</sys:String>
+    <sys:String x:Key="AppLockPasswordSet" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Password blocco impostata</sys:String>
+    <sys:String x:Key="AppLockNotConfigured" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Imposta prima una password dalle Impostazioni.</sys:String>
+    <sys:String x:Key="AppLockNoRecovery" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Nessun codice di recupero disponibile per questa configurazione.</sys:String>
+    <sys:String x:Key="AppLockRecoveryPrompt" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Inserisci il codice di recupero mostrato quando hai impostato la password.</sys:String>
+    <sys:String x:Key="UnlockCodeLabel" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Codice di sblocco</sys:String>
+    <sys:String x:Key="AppLockResetHint" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Usare il codice di recupero disattiva il blocco app e reimposta il tempo su "Mai".</sys:String>
+    <sys:String x:Key="AppLockRecoveryButton" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Verifica</sys:String>
+    <sys:String x:Key="AppLockRecoveryInvalid" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Codice di recupero errato.</sys:String>
+    <sys:String x:Key="RecoveryCodeTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Salva il tuo codice di recupero</sys:String>
+    <sys:String x:Key="RecoveryCodeExplain" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Se dimentichi la password, solo questo codice ti permetterà di sbloccare l'app. Salvalo in un posto sicuro (es. un password manager): non verrà più mostrato.</sys:String>
+    <sys:String x:Key="CopyCode" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Copia</sys:String>
+    <sys:String x:Key="RecoveryCodeConfirm" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Ho salvato il codice</sys:String>
 </ResourceDictionary>

@@ -1,9 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using RenOff.Core;
+using Brush = System.Windows.Media.Brush;
+using Brushes = System.Windows.Media.Brushes;
+using Color = System.Windows.Media.Color;
 using WinForms = System.Windows.Forms;
 using WpfApplication = System.Windows.Application;
 
@@ -14,6 +19,7 @@ public sealed class TrayService : IDisposable
     private readonly WinForms.NotifyIcon _notifyIcon;
     private readonly DispatcherTimer _nudgeTimer;
     private DateTimeOffset _lastNudgeAt = DateTimeOffset.MinValue;
+    private static readonly List<Window> OpenPopups = new();
 
     public TrayService()
     {
@@ -66,6 +72,24 @@ public sealed class TrayService : IDisposable
         open.Click += (_, _) => ShowMainWindow();
         menu.Items.Add(open);
 
+        var lockNow = new WinForms.ToolStripMenuItem(GetString("TrayLockNow", "Blocca RenOff"));
+        lockNow.Click += (_, _) =>
+        {
+            if (!AppLockService.HasPasswordConfigured())
+            {
+                var app = WpfApplication.Current;
+                app?.Dispatcher.Invoke(() => System.Windows.MessageBox.Show(
+                    GetString("AppLockNotConfigured", "Imposta prima una password dalle Impostazioni."),
+                    "RenOff",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information));
+                return;
+            }
+
+            AppLockService.LockNow();
+        };
+        menu.Items.Add(lockNow);
+
         menu.Items.Add(new WinForms.ToolStripSeparator());
 
         var exit = new WinForms.ToolStripMenuItem(GetString("TrayExit", "Esci"));
@@ -88,7 +112,19 @@ public sealed class TrayService : IDisposable
         return app.TryFindResource(key) as string ?? fallback;
     }
 
+    private static Brush GetBrush(string key, Color fallback)
+    {
+        var app = WpfApplication.Current;
+        if (app?.TryFindResource(key) is Brush brush) return brush;
+        return new SolidColorBrush(fallback);
+    }
+
     private void ShowMainWindow()
+    {
+        AppLockService.RequestShowMainWindow(ShowMainWindowCore);
+    }
+
+    private void ShowMainWindowCore()
     {
         var app = WpfApplication.Current;
         if (app is null) return;
@@ -130,7 +166,7 @@ public sealed class TrayService : IDisposable
         var reminder = due[0];
         ShowReminderPopup(
             reminder,
-            snooze: () => vm.SnoozeReminder(reminder.ReminderId, TimeSpan.FromMinutes(10)),
+            snooze: duration => vm.SnoozeReminder(reminder.ReminderId, duration),
             dismiss: () => vm.DismissReminder(reminder.ReminderId));
     }
 
@@ -153,7 +189,7 @@ public sealed class TrayService : IDisposable
         ShowNudge(string.Format(template, vm.PendingCount));
     }
 
-    private void ShowReminderPopup(ReminderNotification reminder, Action snooze, Action dismiss)
+    private void ShowReminderPopup(ReminderNotification reminder, Action<TimeSpan> snooze, Action dismiss)
     {
         var text = $"{GetString("ReminderPrefix", "Reminder:")} {reminder.ItemTitle}";
         ShowBalloon("RenOff", text);
@@ -166,97 +202,114 @@ public sealed class TrayService : IDisposable
         ShowPopup(title, text, showSnooze: false, snooze: null, dismiss: null);
     }
 
-    private void ShowPopup(string text, bool showSnooze, Action? snooze, Action? dismiss)
-    {
-        ShowPopup("RenOff", text, showSnooze, snooze, dismiss);
-    }
-
-    private void ShowPopup(string title, string text, bool showSnooze, Action? snooze, Action? dismiss)
+    private void ShowPopup(string title, string text, bool showSnooze, Action<TimeSpan>? snooze, Action? dismiss)
     {
         var app = WpfApplication.Current;
         if (app is null) return;
 
         app.Dispatcher.Invoke(() =>
         {
-            var workArea = SystemParameters.WorkArea;
-            var width = 380.0;
-            var height = 110.0;
-            var margin = 16.0;
+            var background = GetBrush("SurfaceBackgroundBrush", Color.FromRgb(30, 30, 30));
+            var foreground = GetBrush("WindowForegroundBrush", Color.FromRgb(242, 242, 242));
+            var muted = GetBrush("MutedForegroundBrush", Color.FromRgb(160, 160, 160));
+            var accent = GetBrush("AccentBrush", Color.FromRgb(58, 110, 165));
+            var cardBorder = GetBrush("CardBorderBrush", Color.FromArgb(90, 255, 255, 255));
+
+            const double width = 380.0;
 
             var window = new Window
             {
                 Width = width,
-                Height = height,
+                SizeToContent = SizeToContent.Height,
+                MaxHeight = 320,
                 WindowStyle = WindowStyle.None,
                 ResizeMode = ResizeMode.NoResize,
                 ShowInTaskbar = false,
                 Topmost = true,
                 AllowsTransparency = true,
-                Background = System.Windows.Media.Brushes.Transparent,
+                Background = Brushes.Transparent,
                 ShowActivated = false,
-                Left = workArea.Right - width - margin,
-                Top = workArea.Bottom - height - margin,
+                Opacity = 0,
+                WindowStartupLocation = WindowStartupLocation.Manual,
             };
+
+            var slide = new TranslateTransform(0, 16);
 
             var border = new Border
             {
-                CornerRadius = new CornerRadius(10),
-                Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(230, 30, 30, 30)),
-                BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(90, 255, 255, 255)),
+                CornerRadius = new CornerRadius(12),
+                Background = background,
+                BorderBrush = cardBorder,
                 BorderThickness = new Thickness(1),
-                Padding = new Thickness(12),
+                Padding = new Thickness(14),
+                RenderTransform = slide,
             };
 
+            if (App.UiStyle.Equals("modern", StringComparison.OrdinalIgnoreCase))
+            {
+                border.Effect = new System.Windows.Media.Effects.DropShadowEffect
+                {
+                    Color = Color.FromRgb(0, 0, 0),
+                    Direction = 270,
+                    ShadowDepth = 3,
+                    BlurRadius = 12,
+                    Opacity = 0.25,
+                };
+            }
+
             var stack = new StackPanel();
+
             stack.Children.Add(new TextBlock
             {
                 Text = title,
-                Foreground = System.Windows.Media.Brushes.White,
-                FontSize = 13,
+                Foreground = accent,
+                FontSize = 12,
                 FontWeight = FontWeights.SemiBold,
-                Opacity = 0.9,
                 Margin = new Thickness(0, 0, 0, 6),
+                TextWrapping = TextWrapping.Wrap,
             });
+
             stack.Children.Add(new TextBlock
             {
                 Text = text,
-                Foreground = System.Windows.Media.Brushes.White,
+                Foreground = foreground,
                 FontSize = 14,
                 TextWrapping = TextWrapping.Wrap,
-                Opacity = 0.95,
+                MaxHeight = 180,
             });
 
             if (showSnooze)
             {
+                stack.Children.Add(new TextBlock
+                {
+                    Text = GetString("Reminder", "Reminder"),
+                    Foreground = muted,
+                    FontSize = 11,
+                    Margin = new Thickness(0, 8, 0, 0),
+                    Opacity = 0.8,
+                });
+
                 var buttons = new StackPanel
                 {
                     Orientation = System.Windows.Controls.Orientation.Horizontal,
                     HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
-                    Margin = new Thickness(0, 10, 0, 0),
+                    Margin = new Thickness(0, 12, 0, 0),
                 };
 
-                var snoozeButton = new System.Windows.Controls.Button
-                {
-                    Content = "Snooze 10m",
-                    Padding = new Thickness(10, 6, 10, 6),
-                    Margin = new Thickness(0, 0, 8, 0),
-                };
-                snoozeButton.Click += (_, _) =>
-                {
-                    snooze?.Invoke();
-                    window.Close();
-                };
-                buttons.Children.Add(snoozeButton);
+                buttons.Children.Add(BuildSnoozeButton(GetString("Snooze10m", "10 min"), TimeSpan.FromMinutes(10), snooze, window));
+                buttons.Children.Add(BuildSnoozeButton(GetString("Snooze1h", "1 ora"), TimeSpan.FromHours(1), snooze, window));
+                buttons.Children.Add(BuildSnoozeButton(GetString("SnoozeTomorrow", "Domani"), TimeSpanUntilTomorrowMorning(), snooze, window));
 
                 var doneButton = new System.Windows.Controls.Button
                 {
-                    Content = GetString("Ok", "Ok"),
-                    Padding = new Thickness(10, 6, 10, 6),
+                    Content = GetString("Ok", "Fatto"),
+                    Padding = new Thickness(12, 6, 12, 6),
+                    Margin = new Thickness(4, 0, 0, 0),
                 };
                 doneButton.Click += (_, _) =>
                 {
                     dismiss?.Invoke();
-                    window.Close();
+                    ClosePopup(window);
                     ShowMainWindow();
                 };
                 buttons.Children.Add(doneButton);
@@ -269,23 +322,102 @@ public sealed class TrayService : IDisposable
 
             window.MouseLeftButtonUp += (_, _) =>
             {
-                window.Close();
+                ClosePopup(window);
                 ShowMainWindow();
             };
 
-            var timer = new DispatcherTimer(DispatcherPriority.Background)
+            var timeout = new DispatcherTimer(DispatcherPriority.Background)
             {
-                Interval = TimeSpan.FromSeconds(15),
+                Interval = TimeSpan.FromSeconds(showSnooze ? 20 : 15),
             };
-            timer.Tick += (_, _) =>
+            timeout.Tick += (_, _) =>
             {
-                timer.Stop();
-                window.Close();
+                timeout.Stop();
+                ClosePopup(window);
             };
 
-            window.Closed += (_, _) => timer.Stop();
+            window.Loaded += (_, _) =>
+            {
+                OpenPopups.Add(window);
+                RepositionPopups();
+                AnimateIn(window, slide);
+                timeout.Start();
+            };
+
+            window.Closed += (_, _) =>
+            {
+                timeout.Stop();
+                OpenPopups.Remove(window);
+                RepositionPopups();
+            };
+
             window.Show();
-            timer.Start();
         });
+    }
+
+    private static System.Windows.Controls.Button BuildSnoozeButton(string label, TimeSpan duration, Action<TimeSpan>? snooze, Window window)
+    {
+        var button = new System.Windows.Controls.Button
+        {
+            Content = label,
+            Padding = new Thickness(10, 6, 10, 6),
+            Margin = new Thickness(0, 0, 6, 0),
+        };
+        button.Click += (_, _) =>
+        {
+            snooze?.Invoke(duration);
+            ClosePopup(window);
+        };
+        return button;
+    }
+
+    private static TimeSpan TimeSpanUntilTomorrowMorning()
+    {
+        var now = DateTime.Now;
+        var tomorrowMorning = now.Date.AddDays(1).AddHours(9);
+        var span = tomorrowMorning - now;
+        return span > TimeSpan.Zero ? span : TimeSpan.FromHours(12);
+    }
+
+    private static void AnimateIn(Window window, TranslateTransform slide)
+    {
+        var fade = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(220)))
+        {
+            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut },
+        };
+        var move = new DoubleAnimation(16, 0, new Duration(TimeSpan.FromMilliseconds(260)))
+        {
+            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut },
+        };
+
+        window.BeginAnimation(UIElement.OpacityProperty, fade);
+        slide.BeginAnimation(TranslateTransform.YProperty, move);
+    }
+
+    private static void ClosePopup(Window window)
+    {
+        if (!window.IsLoaded && !OpenPopups.Contains(window))
+        {
+            return;
+        }
+        window.Close();
+    }
+
+    private static void RepositionPopups()
+    {
+        var workArea = SystemParameters.WorkArea;
+        const double margin = 16;
+        const double gap = 10;
+
+        var y = workArea.Bottom - margin;
+        for (var i = OpenPopups.Count - 1; i >= 0; i--)
+        {
+            var w = OpenPopups[i];
+            var h = w.ActualHeight > 0 ? w.ActualHeight : 110;
+            y -= h;
+            w.Left = workArea.Right - w.Width - margin;
+            w.Top = y;
+            y -= gap;
+        }
     }
 }

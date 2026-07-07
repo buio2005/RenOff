@@ -8,6 +8,32 @@
         Title="{DynamicResource AppTitle}" Height="650" Width="1015" MinHeight="520" MinWidth="820"
         Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource WindowForegroundBrush}">
+    <Window.Resources>
+        <Style x:Key="SettingsCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="14"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+        <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        <Style x:Key="SectionHintStyle" TargetType="TextBlock">
+            <Setter Property="Opacity" Value="0.75"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+        <Style x:Key="AccentActionButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="Padding" Value="12,7"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -273,107 +299,158 @@
                 </TabItem>
 
                 <TabItem Header="{DynamicResource Settings}">
-                    <Grid Margin="14">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="14">
+                            <Border Style="{StaticResource SettingsCardStyle}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Text="{DynamicResource SettingsAppearanceSection}"/>
+                                    <TextBlock Style="{StaticResource SectionHintStyle}" Text="{DynamicResource SettingsAppearanceHint}"/>
 
-                        <Grid Grid.Row="0" Margin="0,0,0,12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="140"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{DynamicResource Language}" VerticalAlignment="Center" Opacity="0.75"/>
-                            <ComboBox Grid.Column="1"
-                                      SelectedValue="{Binding UiLanguage}"
-                                      SelectedValuePath="Tag"
-                                      Height="30"
-                                      Background="{DynamicResource EditorBackgroundBrush}"
-                                      Foreground="{DynamicResource ControlForegroundBrush}"
-                                      BorderBrush="{DynamicResource ControlBorderBrush}">
-                                <ComboBoxItem Content="Italiano" Tag="it"/>
-                                <ComboBoxItem Content="English" Tag="en"/>
-                            </ComboBox>
-                        </Grid>
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{DynamicResource Language}" VerticalAlignment="Center" Opacity="0.75"/>
+                                        <ComboBox Grid.Column="1"
+                                                  SelectedValue="{Binding UiLanguage}"
+                                                  SelectedValuePath="Tag"
+                                                  Height="30"
+                                                  Background="{DynamicResource EditorBackgroundBrush}"
+                                                  Foreground="{DynamicResource ControlForegroundBrush}"
+                                                  BorderBrush="{DynamicResource ControlBorderBrush}">
+                                            <ComboBoxItem Content="Italiano" Tag="it"/>
+                                            <ComboBoxItem Content="English" Tag="en"/>
+                                        </ComboBox>
+                                    </Grid>
 
-                        <Grid Grid.Row="1" Margin="0,0,0,12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="140"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{DynamicResource Theme}" VerticalAlignment="Center" Opacity="0.75"/>
-                            <ComboBox Grid.Column="1"
-                                      SelectedValue="{Binding UiTheme}"
-                                      SelectedValuePath="Tag"
-                                      Height="30"
-                                      IsEnabled="{Binding IsThemeSelectionEnabled}"
-                                      Background="{DynamicResource EditorBackgroundBrush}"
-                                      Foreground="{DynamicResource ControlForegroundBrush}"
-                                      BorderBrush="{DynamicResource ControlBorderBrush}">
-                                <ComboBoxItem Content="Light" Tag="light"/>
-                                <ComboBoxItem Content="Dark" Tag="dark"/>
-                            </ComboBox>
-                        </Grid>
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{DynamicResource Theme}" VerticalAlignment="Center" Opacity="0.75"/>
+                                        <ComboBox Grid.Column="1"
+                                                  SelectedValue="{Binding UiTheme}"
+                                                  SelectedValuePath="Tag"
+                                                  Height="30"
+                                                  IsEnabled="{Binding IsThemeSelectionEnabled}"
+                                                  Background="{DynamicResource EditorBackgroundBrush}"
+                                                  Foreground="{DynamicResource ControlForegroundBrush}"
+                                                  BorderBrush="{DynamicResource ControlBorderBrush}">
+                                            <ComboBoxItem Content="Light" Tag="light"/>
+                                            <ComboBoxItem Content="Dark" Tag="dark"/>
+                                        </ComboBox>
+                                    </Grid>
 
-                        <Grid Grid.Row="2" Margin="0,0,0,12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="140"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{DynamicResource UiStyle}" VerticalAlignment="Center" Opacity="0.75"/>
-                            <ComboBox Grid.Column="1"
-                                      SelectedValue="{Binding UiStyle}"
-                                      SelectedValuePath="Tag"
-                                      Height="30"
-                                      Background="{DynamicResource EditorBackgroundBrush}"
-                                      Foreground="{DynamicResource ControlForegroundBrush}"
-                                      BorderBrush="{DynamicResource ControlBorderBrush}">
-                                <ComboBoxItem Content="{DynamicResource Classic}" Tag="classic"/>
-                                <ComboBoxItem Content="{DynamicResource Modern}" Tag="modern"/>
-                            </ComboBox>
-                        </Grid>
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{DynamicResource UiStyle}" VerticalAlignment="Center" Opacity="0.75"/>
+                                        <ComboBox Grid.Column="1"
+                                                  SelectedValue="{Binding UiStyle}"
+                                                  SelectedValuePath="Tag"
+                                                  Height="30"
+                                                  Background="{DynamicResource EditorBackgroundBrush}"
+                                                  Foreground="{DynamicResource ControlForegroundBrush}"
+                                                  BorderBrush="{DynamicResource ControlBorderBrush}">
+                                            <ComboBoxItem Content="{DynamicResource Classic}" Tag="classic"/>
+                                            <ComboBoxItem Content="{DynamicResource Modern}" Tag="modern"/>
+                                        </ComboBox>
+                                    </Grid>
 
-                        <CheckBox Grid.Row="3" Content="{DynamicResource CloseToTray}" IsChecked="{Binding CloseToTrayEnabled}" Margin="0,0,0,12"/>
+                                    <CheckBox Content="{DynamicResource CloseToTray}" IsChecked="{Binding CloseToTrayEnabled}"/>
+                                </StackPanel>
+                            </Border>
 
-                        <Grid Grid.Row="4" Margin="0,0,0,12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="140"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                            <Border Style="{StaticResource SettingsCardStyle}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Text="{DynamicResource SettingsReminderSection}"/>
+                                    <TextBlock Style="{StaticResource SectionHintStyle}" Text="{DynamicResource SettingsReminderHint}"/>
 
-                            <CheckBox Grid.Column="0" Content="{DynamicResource Nudge}" IsChecked="{Binding NudgeEnabled}" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{DynamicResource NudgeEvery}" VerticalAlignment="Center" Margin="10,0,10,0" Opacity="0.75"/>
-                            <ComboBox Grid.Column="2"
-                                      SelectedValue="{Binding NudgeIntervalHours}"
-                                      SelectedValuePath="Tag"
-                                      Height="30"
-                                      Width="80"
-                                      IsEnabled="{Binding NudgeEnabled}"
-                                      Background="{DynamicResource EditorBackgroundBrush}"
-                                      Foreground="{DynamicResource ControlForegroundBrush}"
-                                      BorderBrush="{DynamicResource ControlBorderBrush}">
-                                <ComboBoxItem Content="2" Tag="2"/>
-                                <ComboBoxItem Content="4" Tag="4"/>
-                                <ComboBoxItem Content="6" Tag="6"/>
-                                <ComboBoxItem Content="12" Tag="12"/>
-                            </ComboBox>
-                            <TextBlock Grid.Column="3" Text="{DynamicResource Hours}" VerticalAlignment="Center" Margin="10,0,0,0" Opacity="0.75"/>
-                        </Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,0,0,12">
-                            <Button Content="{DynamicResource Export}" Command="{Binding ExportCommand}" Padding="10,6" Margin="0,0,8,0"/>
-                            <Button Content="{DynamicResource Import}" Command="{Binding ImportCommand}" Padding="10,6"/>
+                                        <CheckBox Grid.Column="0" Content="{DynamicResource Nudge}" IsChecked="{Binding NudgeEnabled}" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{DynamicResource NudgeEvery}" VerticalAlignment="Center" Margin="10,0,10,0" Opacity="0.75"/>
+                                        <ComboBox Grid.Column="2"
+                                                  SelectedValue="{Binding NudgeIntervalHours}"
+                                                  SelectedValuePath="Tag"
+                                                  Height="30"
+                                                  Width="80"
+                                                  IsEnabled="{Binding NudgeEnabled}"
+                                                  Background="{DynamicResource EditorBackgroundBrush}"
+                                                  Foreground="{DynamicResource ControlForegroundBrush}"
+                                                  BorderBrush="{DynamicResource ControlBorderBrush}">
+                                            <ComboBoxItem Content="2" Tag="2"/>
+                                            <ComboBoxItem Content="4" Tag="4"/>
+                                            <ComboBoxItem Content="6" Tag="6"/>
+                                            <ComboBoxItem Content="12" Tag="12"/>
+                                        </ComboBox>
+                                        <TextBlock Grid.Column="3" Text="{DynamicResource Hours}" VerticalAlignment="Center" Margin="10,0,0,0" Opacity="0.75"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource SettingsCardStyle}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Text="{DynamicResource SettingsBackupSection}"/>
+                                    <TextBlock Style="{StaticResource SectionHintStyle}" Text="{DynamicResource SettingsBackupHint}"/>
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="{DynamicResource Export}"
+                                                Command="{Binding ExportCommand}"
+                                                Style="{StaticResource AccentActionButton}"
+                                                Margin="0,0,8,0"/>
+                                        <Button Content="{DynamicResource Import}"
+                                                Command="{Binding ImportCommand}"
+                                                Padding="12,7"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource SettingsCardStyle}" Margin="0,0,0,0">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Text="{DynamicResource SettingsPrivacySection}"/>
+                                    <TextBlock Style="{StaticResource SectionHintStyle}" Text="{DynamicResource SettingsPrivacyHint}"/>
+
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{DynamicResource AppLockLabel}" VerticalAlignment="Center" Opacity="0.75"/>
+                                        <ComboBox Grid.Column="1"
+                                                  SelectedValue="{Binding AppLockTimeout}"
+                                                  SelectedValuePath="Tag"
+                                                  Height="30"
+                                                  Background="{DynamicResource EditorBackgroundBrush}"
+                                                  Foreground="{DynamicResource ControlForegroundBrush}"
+                                                  BorderBrush="{DynamicResource ControlBorderBrush}">
+                                            <ComboBoxItem Content="{DynamicResource AppLockNever}" Tag="never"/>
+                                            <ComboBoxItem Content="{DynamicResource AppLock30m}" Tag="30m"/>
+                                            <ComboBoxItem Content="{DynamicResource AppLock1h}" Tag="1h"/>
+                                        </ComboBox>
+                                    </Grid>
+
+                                    <TextBlock Style="{StaticResource SectionHintStyle}" Text="{DynamicResource AppLockResetHint}" Margin="140,0,0,12"/>
+
+                                    <Button Content="{DynamicResource ChangeLockPassword}"
+                                            Command="{Binding ChangeLockPasswordCommand}"
+                                            HorizontalAlignment="Left"
+                                            Style="{StaticResource AccentActionButton}"/>
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
-                    </Grid>
+                    </ScrollViewer>
                 </TabItem>
             </TabControl>
         </Grid>

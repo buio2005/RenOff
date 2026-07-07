@@ -1,0 +1,70 @@
+<Window x:Class="RenOff.App.RecoveryCodeDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="RenOff"
+        Width="400"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Background="{DynamicResource WindowBackgroundBrush}"
+        Foreground="{DynamicResource WindowForegroundBrush}">
+    <Window.Resources>
+        <Style x:Key="AccentDialogButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="Padding" Value="14,7"/>
+        </Style>
+    </Window.Resources>
+    <Border Margin="16"
+            Padding="20"
+            Background="{DynamicResource SurfaceBackgroundBrush}"
+            BorderBrush="{DynamicResource ControlBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="12">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="{DynamicResource RecoveryCodeTitle}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
+            <StackPanel Grid.Row="1" Margin="0,0,0,14">
+                <Border Height="2" Width="56" Background="{DynamicResource AccentBrush}" HorizontalAlignment="Left" Margin="0,0,0,10"/>
+                <TextBlock Text="{DynamicResource RecoveryCodeExplain}" TextWrapping="Wrap" Opacity="0.85"/>
+            </StackPanel>
+
+            <Border Grid.Row="2"
+                    Background="{DynamicResource EditorBackgroundBrush}"
+                    BorderBrush="{DynamicResource AccentBrush}"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    Padding="12"
+                    Margin="0,0,0,10">
+                <TextBox x:Name="CodeBox"
+                         IsReadOnly="True"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         FontSize="20"
+                         FontFamily="Consolas"
+                         FontWeight="Bold"
+                         HorizontalContentAlignment="Center"
+                         VerticalContentAlignment="Center"
+                         MinHeight="32"/>
+            </Border>
+
+            <Button Grid.Row="3" Content="{DynamicResource CopyCode}" Padding="12,7" HorizontalAlignment="Left" Click="OnCopyClick"/>
+
+            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+                <Button Content="{DynamicResource RecoveryCodeConfirm}"
+                        Style="{StaticResource AccentDialogButton}"
+                        Click="OnConfirmClick"
+                        IsDefault="True"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
