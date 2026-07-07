@@ -1,6 +1,6 @@
 #define MyAppName "RenOff"
 #define MyAppVersion "1.0.0"
-#define MyAppPublisher "boxbu"
+#define MyAppPublisher "buio2005"
 #define MyAppExeName "RenOff.App.exe"
 #define MyAppSourceDir "artifacts\publish\win-x64"
 #define MyAppIconFile "src\RenOff.App\Assets\RenOff.ico"
