@@ -1,8 +1,8 @@
-# RenOff (v0.1.0)
+# RenOff (v1.0.0)
 
 RenOff is a lightweight Windows app (WPF, .NET) for quick notes and to-dos, with reminders and “nudges” that help you review pending items.
 
-This is the first public release (0.1.0). Feedback and bug reports are welcome.
+Version 1.0.0 is the first full stable release. Feedback and bug reports are welcome.
 
 ## Features
 
@@ -16,6 +16,9 @@ This is the first public release (0.1.0). Feedback and bug reports are welcome.
 - Languages: Italian / English
 - Drag & drop reorder (persistent)
 - Backup export/import (JSON)
+- Encrypted backup export/import
+- App lock with password protection
+- Recovery code support for lock reset
 
 ## Privacy & data
 
@@ -27,7 +30,15 @@ This is the first public release (0.1.0). Feedback and bug reports are welcome.
 
 From the app Settings tab you can:
 - Export a `.renoff.json` backup (items + reminders)
+- Export an encrypted `.renoff.enc` backup with passphrase protection
 - Import a backup (replace all or merge)
+- Import encrypted backups by entering the correct passphrase
+
+## Security
+
+- Optional app lock with password protection
+- Recovery code shown once during password setup
+- If the recovery code is used, app lock is disabled and timeout returns to `Never` for safety
 
 ## First run
 
@@ -39,11 +50,13 @@ They are only starter examples to show how the app works, and can be edited or d
 
 ## Download
 
-Releases are distributed as a `.zip` file containing the published build.
+GitHub Releases provide two Windows assets:
+- `RenOff-Setup-1.0.0.exe`: installer version
+- `RenOff-v1.0.0-win-x64-self-contained.zip`: portable version
 
-For GitHub Releases you can publish:
-- Framework-dependent (smaller): requires **.NET Desktop Runtime 8**
-- Self-contained (bigger): includes the runtime (recommended for non-technical users)
+Recommended for most users:
+- Use the installer for the simplest setup
+- Use the portable zip if you prefer to extract and run the app manually
 
 ## Build (dev)
 
@@ -57,45 +70,33 @@ dotnet run --project src/RenOff.App
 
 ## Publish (release)
 
-### Option A: framework-dependent (win-x64)
+### Self-contained (win-x64)
 
 ```powershell
-dotnet publish src/RenOff.App -c Release -r win-x64 --self-contained false `
-  -p:PublishSingleFile=true -p:DebugType=none -p:DebugSymbols=false
+dotnet publish .\src\RenOff.App\RenOff.App.csproj -c Release -r win-x64 --self-contained true -o .\artifacts\publish\win-x64
 ```
 
 Output folder:
-- `src\RenOff.App\bin\Release\net8.0-windows\win-x64\publish\`
+- `artifacts\publish\win-x64\`
 
 Zip it, for example:
-- `RenOff-v0.1.0-win-x64-framework-dependent.zip`
-
-### Option B: self-contained (win-x64)
-
-```powershell
-dotnet publish src/RenOff.App -c Release -r win-x64 --self-contained true `
-  -p:PublishSingleFile=true -p:DebugType=none -p:DebugSymbols=false
-```
-
-Output folder:
-- `src\RenOff.App\bin\Release\net8.0-windows\win-x64\publish\`
-
-Zip it, for example:
-- `RenOff-v0.1.0-win-x64-self-contained.zip`
+- `RenOff-v1.0.0-win-x64-self-contained.zip`
 
 ## Creating a GitHub Release (manual)
 
 1. Push the code to GitHub
 2. On GitHub: **Releases** → **Draft a new release**
-3. Tag: `v0.1.0`
-4. Title: `RenOff 0.1.0`
-5. Attach the zip produced by `dotnet publish`
+3. Tag: `v1.0.0`
+4. Title: `RenOff 1.0.0`
+5. Attach:
+   - `RenOff-Setup-1.0.0.exe`
+   - `RenOff-v1.0.0-win-x64-self-contained.zip`
 6. Publish the release
 
 ## Feedback
 
 Open a GitHub Issue with:
-- app version (0.1.0)
+- app version (1.0.0)
 - Windows version (10/11)
 - expected vs actual behavior
 - screenshots (if helpful)
