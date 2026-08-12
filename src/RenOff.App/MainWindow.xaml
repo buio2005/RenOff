@@ -187,7 +187,7 @@
                                                          FontWeight="SemiBold"
                                                          Padding="10,8"
                                                          Background="{DynamicResource EditorBackgroundBrush}"
-                                                         Height="44"
+                                                         MinHeight="44"
                                                          VerticalContentAlignment="Center"/>
 
                                                 <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10,0,10">
@@ -199,15 +199,16 @@
                                                         BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
                                                         Background="{DynamicResource SurfaceBackgroundBrush}">
                                                     <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="Auto"/>
+                                                        </Grid.RowDefinitions>
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto"/>
                                                             <ColumnDefinition Width="Auto"/>
                                                             <ColumnDefinition Width="Auto"/>
                                                             <ColumnDefinition Width="Auto"/>
                                                             <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                            <ColumnDefinition Width="Auto"/>
                                                         </Grid.ColumnDefinitions>
 
                                                         <CheckBox Grid.Column="0"
@@ -244,22 +245,28 @@
                                                                    Opacity="0.65"
                                                                    TextTrimming="CharacterEllipsis"/>
 
-                                                        <Button Grid.Column="5"
-                                                                Content="{DynamicResource Save}"
-                                                                Command="{Binding DataContext.SaveReminderCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                Padding="10,6"
-                                                                Margin="0,0,8,0"/>
+                                                        <!-- Su una riga separata: in stile Moderno i controlli sono più
+                                                             larghi e l'ultimo pulsante finiva tagliato. -->
+                                                        <StackPanel Grid.Row="1"
+                                                                    Grid.Column="0"
+                                                                    Grid.ColumnSpan="5"
+                                                                    Orientation="Horizontal"
+                                                                    HorizontalAlignment="Right"
+                                                                    Margin="0,10,0,0">
+                                                            <Button Content="{DynamicResource Save}"
+                                                                    Command="{Binding DataContext.SaveReminderCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                    Padding="10,6"
+                                                                    Margin="0,0,8,0"/>
 
-                                                        <Button Grid.Column="6"
-                                                                Content="{DynamicResource Snooze10m}"
-                                                                Command="{Binding DataContext.SnoozeSelectedReminderCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                Padding="10,6"
-                                                                Margin="0,0,8,0"/>
+                                                            <Button Content="{DynamicResource Snooze10m}"
+                                                                    Command="{Binding DataContext.SnoozeSelectedReminderCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                    Padding="10,6"
+                                                                    Margin="0,0,8,0"/>
 
-                                                        <Button Grid.Column="7"
-                                                                Content="{DynamicResource Disable}"
-                                                                Command="{Binding DataContext.ClearReminderCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                Padding="10,6"/>
+                                                            <Button Content="{DynamicResource Disable}"
+                                                                    Command="{Binding DataContext.ClearReminderCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                    Padding="10,6"/>
+                                                        </StackPanel>
                                                     </Grid>
                                                 </Border>
 
