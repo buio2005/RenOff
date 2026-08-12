@@ -1,5 +1,5 @@
 #define MyAppName "RenOff"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "buio2005"
 #define MyAppExeName "RenOff.App.exe"
 #define MyAppSourceDir "artifacts\publish\win-x64"

@@ -1,8 +1,8 @@
-# RenOff (v1.0.0)
+# RenOff (v1.0.1)
 
 RenOff is a lightweight Windows app (WPF, .NET) for quick notes and to-dos, with reminders and “nudges” that help you review pending items.
 
-Version 1.0.0 is the first full stable release. Feedback and bug reports are welcome.
+Version 1.0.1 is a maintenance release: it fixes the app lock and the reminder pop-ups, and polishes the Modern UI style. See CHANGELOG.md for details. Feedback and bug reports are welcome.
 
 ## Features
 
@@ -51,8 +51,8 @@ They are only starter examples to show how the app works, and can be edited or d
 ## Download
 
 GitHub Releases provide two Windows assets:
-- `RenOff-Setup-1.0.0.exe`: installer version
-- `RenOff-v1.0.0-win-x64-self-contained.zip`: portable version
+- `RenOff-Setup-1.0.1.exe`: installer version
+- `RenOff-v1.0.1-win-x64-self-contained.zip`: portable version
 
 Recommended for most users:
 - Use the installer for the simplest setup
@@ -80,23 +80,23 @@ Output folder:
 - `artifacts\publish\win-x64\`
 
 Zip it, for example:
-- `RenOff-v1.0.0-win-x64-self-contained.zip`
+- `RenOff-v1.0.1-win-x64-self-contained.zip`
 
 ## Creating a GitHub Release (manual)
 
 1. Push the code to GitHub
 2. On GitHub: **Releases** → **Draft a new release**
-3. Tag: `v1.0.0`
-4. Title: `RenOff 1.0.0`
+3. Tag: `v1.0.1`
+4. Title: `RenOff 1.0.1`
 5. Attach:
-   - `RenOff-Setup-1.0.0.exe`
-   - `RenOff-v1.0.0-win-x64-self-contained.zip`
+   - `RenOff-Setup-1.0.1.exe`
+   - `RenOff-v1.0.1-win-x64-self-contained.zip`
 6. Publish the release
 
 ## Feedback
 
 Open a GitHub Issue with:
-- app version (1.0.0)
+- app version (1.0.1)
 - Windows version (10/11)
 - expected vs actual behavior
 - screenshots (if helpful)
