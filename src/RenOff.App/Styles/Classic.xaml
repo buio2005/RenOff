@@ -8,6 +8,14 @@
     <SolidColorBrush x:Key="SurfaceBackgroundBrush" Color="#FFF6FBFF"/>
     <SolidColorBrush x:Key="EditorBackgroundBrush" Color="#FFFFFFFF"/>
 
+    <!-- Shared accents so shared markup stays consistent in Classic style -->
+    <SolidColorBrush x:Key="MutedForegroundBrush" Color="#FF5A6B7A"/>
+    <SolidColorBrush x:Key="ListItemHoverBackgroundBrush" Color="#FFDCEEFF"/>
+    <SolidColorBrush x:Key="SelectedBackgroundBrush" Color="#FFCFE6FF"/>
+    <SolidColorBrush x:Key="SelectedForegroundBrush" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="CardBorderBrush" Color="#FFAECBEA"/>
+    <SolidColorBrush x:Key="FocusBorderBrush" Color="#FF0066CC"/>
+
     <Style TargetType="{x:Type Button}">
         <Setter Property="Padding" Value="10,6"/>
         <Setter Property="BorderThickness" Value="1"/>

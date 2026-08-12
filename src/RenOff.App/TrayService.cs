@@ -154,6 +154,10 @@ public sealed class TrayService : IDisposable
         var app = WpfApplication.Current;
         if (app?.MainWindow?.DataContext is not MainViewModel vm) return;
 
+        // While locked, don't leak note titles into balloons/pop-ups and don't
+        // burn a reminder the user can't act on.
+        if (AppLockService.IsLocked) return;
+
         ProcessDueReminders(vm);
         MaybeTodoNudge(vm);
     }

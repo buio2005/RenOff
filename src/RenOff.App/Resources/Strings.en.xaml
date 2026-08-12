@@ -87,7 +87,8 @@
     <sys:String x:Key="AppLockSetPasswordButton" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Set</sys:String>
     <sys:String x:Key="AppLockPasswordSet" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Lock password set</sys:String>
     <sys:String x:Key="AppLockNotConfigured" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Set a password from Settings first.</sys:String>
-    <sys:String x:Key="AppLockNoRecovery" xmlns:sys="clr-namespace:System;assembly=System.Runtime">No recovery code available for this configuration.</sys:String>
+    <sys:String x:Key="AppLockExit" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Quit RenOff</sys:String>
+    <sys:String x:Key="AppLockNoRecovery" xmlns:sys="clr-namespace:System;assembly=System.Runtime">No recovery code available for this configuration. You can close RenOff with "Quit RenOff"; the lock stays on next time you open it.</sys:String>
     <sys:String x:Key="AppLockRecoveryPrompt" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Enter the recovery code shown when you set the password.</sys:String>
     <sys:String x:Key="UnlockCodeLabel" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Unlock code</sys:String>
     <sys:String x:Key="AppLockResetHint" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Using the recovery code disables app lock and resets the timeout to "Never".</sys:String>

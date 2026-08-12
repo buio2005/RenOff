@@ -55,6 +55,11 @@
                         Click="OnUnlockClick"
                         IsDefault="True"
                         DockPanel.Dock="Right"/>
+                <Button Content="{DynamicResource AppLockExit}"
+                        Padding="14,7"
+                        Margin="0,0,8,0"
+                        Click="OnExitClick"
+                        DockPanel.Dock="Right"/>
             </DockPanel>
         </Grid>
     </Border>

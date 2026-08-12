@@ -87,7 +87,8 @@
     <sys:String x:Key="AppLockSetPasswordButton" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Imposta</sys:String>
     <sys:String x:Key="AppLockPasswordSet" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Password blocco impostata</sys:String>
     <sys:String x:Key="AppLockNotConfigured" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Imposta prima una password dalle Impostazioni.</sys:String>
-    <sys:String x:Key="AppLockNoRecovery" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Nessun codice di recupero disponibile per questa configurazione.</sys:String>
+    <sys:String x:Key="AppLockExit" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Esci da RenOff</sys:String>
+    <sys:String x:Key="AppLockNoRecovery" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Nessun codice di recupero disponibile per questa configurazione. Puoi chiudere RenOff con "Esci da RenOff"; il blocco resterà attivo alla prossima apertura.</sys:String>
     <sys:String x:Key="AppLockRecoveryPrompt" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Inserisci il codice di recupero mostrato quando hai impostato la password.</sys:String>
     <sys:String x:Key="UnlockCodeLabel" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Codice di sblocco</sys:String>
     <sys:String x:Key="AppLockResetHint" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Usare il codice di recupero disattiva il blocco app e reimposta il tempo su "Mai".</sys:String>

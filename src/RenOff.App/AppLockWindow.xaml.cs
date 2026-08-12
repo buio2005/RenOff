@@ -9,6 +9,7 @@ namespace RenOff.App;
 public partial class AppLockWindow : Window
 {
     private bool _unlockedSuccessfully;
+    private bool _exitRequested;
 
     public event EventHandler? Unlocked;
 
@@ -29,6 +30,17 @@ public partial class AppLockWindow : Window
     private void OnUnlockClick(object sender, RoutedEventArgs e)
     {
         TryUnlock();
+    }
+
+    private void OnExitClick(object sender, RoutedEventArgs e)
+    {
+        var app = System.Windows.Application.Current;
+        if (app is null) return;
+
+        _exitRequested = true;
+        App.IsExiting = true;
+        Close();
+        app.Shutdown();
     }
 
     private void TryUnlock()
@@ -89,7 +101,7 @@ public partial class AppLockWindow : Window
 
     private void OnClosing(object? sender, CancelEventArgs e)
     {
-        if (!_unlockedSuccessfully)
+        if (!_unlockedSuccessfully && !_exitRequested)
         {
             e.Cancel = true;
         }

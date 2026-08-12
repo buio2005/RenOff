@@ -31,6 +31,14 @@
     <SolidColorBrush x:Key="SurfaceBackgroundBrush" Color="#FFFFFCF7"/>
     <SolidColorBrush x:Key="EditorBackgroundBrush" Color="#FFFFF6E8"/>
 
+    <!-- Shared accents for list rows and secondary text -->
+    <SolidColorBrush x:Key="MutedForegroundBrush" Color="#FF8A7A63"/>
+    <SolidColorBrush x:Key="ListItemHoverBackgroundBrush" Color="#FFF1E6D2"/>
+    <SolidColorBrush x:Key="SelectedBackgroundBrush" Color="#FFF6E2C6"/>
+    <SolidColorBrush x:Key="SelectedForegroundBrush" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="CardBorderBrush" Color="#FFE1D3B8"/>
+    <SolidColorBrush x:Key="FocusBorderBrush" Color="#FFB35A1F"/>
+
     <Style TargetType="{x:Type Window}">
         <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource WindowForegroundBrush}"/>

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
@@ -14,6 +15,7 @@ public static class AppLockService
     private const string TimeoutSettingKey = "applock.timeout";
     private const string HashSettingKey = "applock.hash";
     private const string RecoveryHashSettingKey = "applock.recoveryHash";
+    private const string LockedSettingKey = "applock.locked";
     private const string RecoveryCodeChars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 
     private static DateTimeOffset _lastInteractionAtUtc = DateTimeOffset.UtcNow;
@@ -25,6 +27,12 @@ public static class AppLockService
     public static void Start(Window mainWindow)
     {
         RegisterActivitySource(mainWindow);
+
+        // A lock survives a restart: killing the process is not a way around it.
+        if (HasPasswordConfigured() && OpenStore().GetSetting(LockedSettingKey) == "1")
+        {
+            TriggerLock(showScreen: mainWindow.Visibility == Visibility.Visible);
+        }
 
         if (_idleTimer is null)
         {
@@ -59,7 +67,7 @@ public static class AppLockService
             return;
         }
 
-        TriggerLock();
+        TriggerLock(showScreen: true);
     }
 
     public static void RequestShowMainWindow(Action showMainWindow)
@@ -113,6 +121,8 @@ public static class AppLockService
         store.SetSetting(TimeoutSettingKey, "never");
         store.SetSetting(HashSettingKey, "");
         store.SetSetting(RecoveryHashSettingKey, "");
+        store.SetSetting(LockedSettingKey, "");
+        IsLocked = false;
     }
 
     private static string GenerateRecoveryCode()
@@ -155,22 +165,58 @@ public static class AppLockService
         var timeout = GetTimeout();
         if (timeout is null) return;
 
-        var window = WpfApplication.Current?.MainWindow;
-        if (window is null || window.Visibility != Visibility.Visible) return;
+        if (GetIdleTime() < timeout.Value) return;
 
-        if (DateTimeOffset.UtcNow - _lastInteractionAtUtc >= timeout.Value)
-        {
-            TriggerLock();
-        }
+        // If the window is hidden in the tray, lock silently: the lock screen
+        // is shown the next time the user asks to open RenOff.
+        var window = WpfApplication.Current?.MainWindow;
+        TriggerLock(showScreen: window is not null && window.Visibility == Visibility.Visible);
     }
 
-    private static void TriggerLock()
+    /// <summary>
+    /// Time since the last input anywhere on the machine, not just inside RenOff:
+    /// working in another app must not count as inactivity.
+    /// </summary>
+    private static TimeSpan GetIdleTime()
+    {
+        var appIdle = DateTimeOffset.UtcNow - _lastInteractionAtUtc;
+
+        var info = new LastInputInfo { cbSize = (uint)Marshal.SizeOf<LastInputInfo>() };
+        if (!GetLastInputInfo(ref info))
+        {
+            // Can't tell: assume the user is active rather than locking them out.
+            return TimeSpan.Zero;
+        }
+
+        var systemIdleMs = unchecked((uint)Environment.TickCount - info.dwTime);
+        var systemIdle = TimeSpan.FromMilliseconds(systemIdleMs);
+
+        return systemIdle < appIdle ? systemIdle : appIdle;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct LastInputInfo
+    {
+        public uint cbSize;
+        public uint dwTime;
+    }
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetLastInputInfo(ref LastInputInfo plii);
+
+    private static void TriggerLock(bool showScreen)
     {
         if (IsLocked) return;
 
         IsLocked = true;
+        OpenStore().SetSetting(LockedSettingKey, "1");
         WpfApplication.Current?.MainWindow?.Hide();
-        ShowLockScreen();
+
+        if (showScreen)
+        {
+            ShowLockScreen();
+        }
     }
 
     private static void ShowLockScreen()
@@ -197,6 +243,7 @@ public static class AppLockService
         }
 
         IsLocked = false;
+        OpenStore().SetSetting(LockedSettingKey, "");
         NotifyActivity();
 
         var window = WpfApplication.Current?.MainWindow;
