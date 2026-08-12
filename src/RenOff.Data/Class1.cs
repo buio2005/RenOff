@@ -304,7 +304,12 @@ public sealed class LocalSqliteStore
         command.ExecuteNonQuery();
     }
 
-    public IReadOnlyList<ReminderNotification> DequeueDueReminders(DateTimeOffset nowUtc, int limit = 3)
+    /// <summary>
+    /// Returns the reminders that are due, without consuming them: a reminder is
+    /// only closed when the user acts on it (snooze, done, or opening the app).
+    /// Ignoring the pop-up must not silently swallow the reminder.
+    /// </summary>
+    public IReadOnlyList<ReminderNotification> GetDueReminders(DateTimeOffset nowUtc, int limit = 3)
     {
         using var connection = OpenConnection();
         using var command = connection.CreateCommand();
@@ -332,7 +337,6 @@ public sealed class LocalSqliteStore
 
         using var reader = command.ExecuteReader();
         var list = new List<ReminderNotification>();
-        var ids = new List<string>();
 
         while (reader.Read())
         {
@@ -348,37 +352,33 @@ public sealed class LocalSqliteStore
                 ItemTitle = title,
                 EffectiveAtUtc = effectiveAt,
             });
-            ids.Add(reminderId.ToString("D"));
-        }
-
-        if (ids.Count > 0)
-        {
-            using var update = connection.CreateCommand();
-            var paramNames = new List<string>(ids.Count);
-            for (var i = 0; i < ids.Count; i++)
-            {
-                var name = $"$id{i}";
-                paramNames.Add(name);
-                update.Parameters.AddWithValue(name, ids[i]);
-            }
-
-            update.CommandText =
-                $"""
-                 UPDATE Reminders
-                 SET
-                     Status = $fired,
-                     LastFiredAtUtc = $nowUtc,
-                     UpdatedAtUtc = $nowUtc
-                 WHERE Id IN ({string.Join(",", paramNames)});
-                 """;
-
-            update.Parameters.AddWithValue("$fired", (int)ReminderStatus.Fired);
-            update.Parameters.AddWithValue("$nowUtc", nowUtc.ToString("O"));
-
-            update.ExecuteNonQuery();
         }
 
         return list;
+    }
+
+    /// <summary>
+    /// Marks a reminder as fired: it has been acknowledged (the user opened the
+    /// app from the pop-up) and must not be proposed again.
+    /// </summary>
+    public void MarkReminderFired(Guid reminderId)
+    {
+        using var connection = OpenConnection();
+        using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            UPDATE Reminders
+            SET
+                Status = $fired,
+                LastFiredAtUtc = $nowUtc,
+                UpdatedAtUtc = $nowUtc
+            WHERE Id = $id;
+            """;
+
+        command.Parameters.AddWithValue("$id", reminderId.ToString("D"));
+        command.Parameters.AddWithValue("$fired", (int)ReminderStatus.Fired);
+        command.Parameters.AddWithValue("$nowUtc", DateTimeOffset.UtcNow.ToString("O"));
+        command.ExecuteNonQuery();
     }
 
     private SqliteConnection OpenConnection()

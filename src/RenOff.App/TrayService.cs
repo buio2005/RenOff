@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -19,6 +20,8 @@ public sealed class TrayService : IDisposable
     private readonly WinForms.NotifyIcon _notifyIcon;
     private readonly DispatcherTimer _nudgeTimer;
     private DateTimeOffset _lastNudgeAt = DateTimeOffset.MinValue;
+    private readonly Dictionary<Guid, DateTimeOffset> _shownReminders = new();
+    private static readonly TimeSpan ReminderReShowAfter = TimeSpan.FromMinutes(10);
     private static readonly List<Window> OpenPopups = new();
 
     public TrayService()
@@ -164,14 +167,47 @@ public sealed class TrayService : IDisposable
 
     private void ProcessDueReminders(MainViewModel vm)
     {
-        var due = vm.DequeueDueReminders(DateTimeOffset.UtcNow, limit: 1);
+        var now = DateTimeOffset.UtcNow;
+        var due = vm.GetDueReminders(now, limit: 5);
         if (due.Count == 0) return;
 
-        var reminder = due[0];
+        // A reminder stays due until the user acts on it, so remember which ones
+        // were just shown instead of re-opening the same pop-up every 5 seconds.
+        foreach (var id in _shownReminders.Where(p => now - p.Value >= ReminderReShowAfter).Select(p => p.Key).ToList())
+        {
+            _shownReminders.Remove(id);
+        }
+
+        ReminderNotification? next = null;
+        foreach (var candidate in due)
+        {
+            if (_shownReminders.ContainsKey(candidate.ReminderId)) continue;
+            next = candidate;
+            break;
+        }
+
+        if (next is null) return;
+
+        var reminder = next;
+        _shownReminders[reminder.ReminderId] = now;
+
         ShowReminderPopup(
             reminder,
-            snooze: duration => vm.SnoozeReminder(reminder.ReminderId, duration),
-            dismiss: () => vm.DismissReminder(reminder.ReminderId));
+            snooze: duration =>
+            {
+                _shownReminders.Remove(reminder.ReminderId);
+                vm.SnoozeReminder(reminder.ReminderId, duration);
+            },
+            dismiss: () =>
+            {
+                _shownReminders.Remove(reminder.ReminderId);
+                vm.DismissReminder(reminder.ReminderId);
+            },
+            acknowledge: () =>
+            {
+                _shownReminders.Remove(reminder.ReminderId);
+                vm.MarkReminderFired(reminder.ReminderId);
+            });
     }
 
     private void MaybeTodoNudge(MainViewModel vm)
@@ -193,20 +229,20 @@ public sealed class TrayService : IDisposable
         ShowNudge(string.Format(template, vm.PendingCount));
     }
 
-    private void ShowReminderPopup(ReminderNotification reminder, Action<TimeSpan> snooze, Action dismiss)
+    private void ShowReminderPopup(ReminderNotification reminder, Action<TimeSpan> snooze, Action dismiss, Action acknowledge)
     {
         var text = $"{GetString("ReminderPrefix", "Reminder:")} {reminder.ItemTitle}";
         ShowBalloon("RenOff", text);
         var title = GetString("ReminderPopupTitle", "RenOff");
-        ShowPopup(title, text, showSnooze: true, snooze: snooze, dismiss: dismiss);
+        ShowPopup(title, text, showSnooze: true, snooze: snooze, dismiss: dismiss, acknowledge: acknowledge);
     }
 
     private void ShowPopup(string title, string text)
     {
-        ShowPopup(title, text, showSnooze: false, snooze: null, dismiss: null);
+        ShowPopup(title, text, showSnooze: false, snooze: null, dismiss: null, acknowledge: null);
     }
 
-    private void ShowPopup(string title, string text, bool showSnooze, Action<TimeSpan>? snooze, Action? dismiss)
+    private void ShowPopup(string title, string text, bool showSnooze, Action<TimeSpan>? snooze, Action? dismiss, Action? acknowledge)
     {
         var app = WpfApplication.Current;
         if (app is null) return;
@@ -326,6 +362,8 @@ public sealed class TrayService : IDisposable
 
             window.MouseLeftButtonUp += (_, _) =>
             {
+                // Opening the app counts as acknowledging the reminder.
+                acknowledge?.Invoke();
                 ClosePopup(window);
                 ShowMainWindow();
             };

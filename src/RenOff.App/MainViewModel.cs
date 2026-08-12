@@ -926,8 +926,11 @@ public sealed class MainViewModel : INotifyPropertyChanged
         }
     }
 
-    public IReadOnlyList<ReminderNotification> DequeueDueReminders(DateTimeOffset nowUtc, int limit = 1)
-        => _store.DequeueDueReminders(nowUtc, limit);
+    public IReadOnlyList<ReminderNotification> GetDueReminders(DateTimeOffset nowUtc, int limit = 1)
+        => _store.GetDueReminders(nowUtc, limit);
+
+    public void MarkReminderFired(Guid reminderId)
+        => _store.MarkReminderFired(reminderId);
 
     public void SnoozeReminder(Guid reminderId, TimeSpan duration)
         => _store.SnoozeReminder(reminderId, DateTimeOffset.UtcNow.Add(duration));

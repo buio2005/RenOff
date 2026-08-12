@@ -47,7 +47,7 @@
     <sys:String x:Key="NudgePopupTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Don’t forget to read your notes</sys:String>
     <sys:String x:Key="NudgeTodoTemplate" xmlns:sys="clr-namespace:System;assembly=System.Runtime">You have {0} pending to-dos. Open RenOff to review them.</sys:String>
     <sys:String x:Key="ReminderPrefix" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Reminder:</sys:String>
-    <sys:String x:Key="ReminderPopupTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Don’t forget to read your notes</sys:String>
+    <sys:String x:Key="ReminderPopupTitle" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Note reminder</sys:String>
     <sys:String x:Key="Ok" xmlns:sys="clr-namespace:System;assembly=System.Runtime">OK</sys:String>
     <sys:String x:Key="TrayOpen" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Open RenOff</sys:String>
     <sys:String x:Key="TrayLockNow" xmlns:sys="clr-namespace:System;assembly=System.Runtime">Lock RenOff</sys:String>
